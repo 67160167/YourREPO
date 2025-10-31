@@ -1,8 +1,5 @@
 <?php
-// dashboard.php (Minimal • Warm Tone)
-// Simple Sales Dashboard (Chart.js + Bootstrap) using mysqli (no PDO)
-
-// ----- DB Connection -----
+// dashboard.php - Modern Gradient Design
 $DB_HOST = 'localhost';
 $DB_USER = 's67160167';
 $DB_PASS = 'cv91AaKA';
@@ -24,13 +21,12 @@ function fetch_all($mysqli, $sql) {
   return $rows;
 }
 
-// ----- Data -----
-$monthly      = fetch_all($mysqli, "SELECT ym, net_sales FROM v_monthly_sales");
-$category     = fetch_all($mysqli, "SELECT category, net_sales FROM v_sales_by_category");
-$region       = fetch_all($mysqli, "SELECT region, net_sales FROM v_sales_by_region");
-$topProducts  = fetch_all($mysqli, "SELECT product_name, qty_sold, net_sales FROM v_top_products");
-$payment      = fetch_all($mysqli, "SELECT payment_method, net_sales FROM v_payment_share");
-$hourly       = fetch_all($mysqli, "SELECT hour_of_day, net_sales FROM v_hourly_sales");
+$monthly = fetch_all($mysqli, "SELECT ym, net_sales FROM v_monthly_sales");
+$category = fetch_all($mysqli, "SELECT category, net_sales FROM v_sales_by_category");
+$region = fetch_all($mysqli, "SELECT region, net_sales FROM v_sales_by_region");
+$topProducts = fetch_all($mysqli, "SELECT product_name, qty_sold, net_sales FROM v_top_products");
+$payment = fetch_all($mysqli, "SELECT payment_method, net_sales FROM v_payment_share");
+$hourly = fetch_all($mysqli, "SELECT hour_of_day, net_sales FROM v_hourly_sales");
 $newReturning = fetch_all($mysqli, "SELECT date_key, new_customer_sales, returning_sales FROM v_new_vs_returning ORDER BY date_key");
 $kpis = fetch_all($mysqli, "
   SELECT
@@ -47,424 +43,576 @@ function nf($n) { return number_format((float)$n, 2); }
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Retail DW Dashboard</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Prompt (Thai) + Inter (Latin) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Bootstrap + Chart.js -->
+  <title>Retail Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{
-      /* Warm minimal palette */
-      --bg:        #FAF6F1;   /* cream */
-      --bg-2:      #F4EDE5;   /* lighter sand */
-      --card:      #FFFAF5;   /* warm white */
-      --text:      #3A2F2A;   /* deep brown */
-      --muted:     #7A6A61;   /* taupe */
-      --border:    rgba(58,47,42,0.08);
-      --grid:      rgba(58,47,42,0.10);
-      --accent:    #E07A5F;   /* terracotta */
-      --accent-2:  #D97706;   /* amber */
-      --accent-3:  #C08457;   /* clay */
-      --accent-4:  #B45309;   /* caramel */
-      --accent-5:  #A16207;   /* warm gold */
-      --radius:    16px;
-      --shadow:    0 10px 30px rgba(58,47,42,0.10);
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      min-height: 100vh;
+      color: #1a1a2e;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      background: radial-gradient(1200px 800px at 15% -10%, var(--bg-2), transparent),
-                  radial-gradient(1200px 800px at 95% 0%, #FFEEDA, transparent),
-                  var(--bg);
-      color: var(--text);
-      font-family: "Inter","Prompt",system-ui,-apple-system,Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", sans-serif;
-      letter-spacing: .1px;
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-
-    .app-header{
-      background: linear-gradient(180deg, #FFF5E9, #FFF9F3);
-      border: 1px solid var(--border);
-      border-radius: calc(var(--radius) + 4px);
-      padding: 20px 20px;
-      box-shadow: var(--shadow);
+    
+    /* Glassmorphism Nav */
+    .top-nav {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      margin: 20px;
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 20px;
+      z-index: 1000;
     }
-    .brand{
-      display:flex; align-items:center; gap:.75rem;
-      font-weight:700; font-size:1.25rem;
+    
+    .top-nav h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .brand-dot{
-      width:12px; height:12px; border-radius:50%;
-      background: linear-gradient(135deg,var(--accent),var(--accent-2));
-      box-shadow:0 0 0 4px rgba(224,122,95,0.15);
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
-    .sub{ color: var(--muted); font-size:.95rem; }
-
-    .grid { display:grid; gap: 1rem; grid-template-columns: repeat(12, 1fr); }
+    
+    .logout-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .container-fluid { 
+      max-width: 1400px; 
+      margin: 0 auto;
+      padding: 0 20px 40px 20px;
+    }
+    
+    /* Glassmorphism Cards */
+    .card { 
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 24px;
+      padding: 28px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe);
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .card:hover::before {
+      opacity: 1;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .card h5 { 
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* KPI Cards with Gradient Icons */
+    .kpi-card {
+      position: relative;
+    }
+    
+    .kpi-icon {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      opacity: 0.4;
+    }
+    
+    .kpi-icon.sales {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    
+    .kpi-icon.qty {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+    
+    .kpi-icon.buyers {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+    
+    .kpi-label {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    
+    .kpi { 
+      font-size: 2.4rem; 
+      font-weight: 800; 
+      background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .kpi-subtext {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.88rem;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    
+    .grid { 
+      display: grid; 
+      gap: 24px; 
+      grid-template-columns: repeat(12, 1fr); 
+    }
+    
     .col-12 { grid-column: span 12; }
-    .col-6  { grid-column: span 6; }
-    .col-4  { grid-column: span 4; }
-    .col-8  { grid-column: span 8; }
-    @media (max-width: 991px) { .col-6,.col-4,.col-8{ grid-column: span 12; } }
-
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-8 { grid-column: span 8; }
+    
+    @media (max-width: 991px) {
+      .col-6, .col-4, .col-8 { grid-column: span 12; }
+      .top-nav { margin: 12px; padding: 12px 20px; }
+      .top-nav h1 { font-size: 1.2rem; }
+      .kpi { font-size: 2rem; }
     }
-    .card h5{ color: var(--text); font-weight:700; }
-    .kpi{ font-size:1.6rem; font-weight:700; }
-    .kpi-desc{ color: var(--muted); font-size:.95rem; }
-
-    .kpi-chip{
-      display:inline-flex; align-items:center; gap:.5rem;
-      background: #FFF2E0; color: var(--accent-2);
-      padding: .25rem .6rem; border-radius: 999px;
-      font-size:.85rem; font-weight:600;
-      border: 1px solid rgba(217,119,6,0.2);
+    
+    canvas { max-height: 360px; }
+    
+    /* Fade in animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-
-    .section-title{
-      display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-      margin-bottom:.25rem;
+    
+    .card {
+      animation: fadeInUp 0.6s ease-out forwards;
     }
-
-    canvas{ max-height: 360px; }
-
-    /* Soft focus outline on focusable elements */
-    a, button { outline-color: var(--accent); outline-offset: 3px; }
-     .btn-logout {
-  background: var(--accent);
-  color: #fff;
-  padding: 0.45rem 1.1rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-decoration: none;
-  box-shadow: 0 3px 8px rgba(224,122,95,0.25);
-  transition: all 0.2s ease;
-}
-.btn-logout:hover {
-  background: var(--accent-2);
-  box-shadow: 0 5px 12px rgba(217,119,6,0.3);
-  text-decoration: none;
-}
-.btn-logout:active {
-  transform: scale(0.97);
-}
+    
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    .card:nth-child(5) { animation-delay: 0.5s; }
+    .card:nth-child(6) { animation-delay: 0.6s; }
+    .card:nth-child(7) { animation-delay: 0.7s; }
   </style>
 </head>
-<body class="p-3 p-md-4">
-  <div class="container-fluid" style="max-width:1400px;">
-    <div class="app-header mb-3 d-flex align-items-center justify-content-between">
-      <div class="brand">
-        <span class="brand-dot"></span>
-        <span>ยอดขาย (Retail DW) — Dashboard</span>
-      </div>
-      <div class="app-header mb-3 d-flex align-items-center justify-content-between flex-wrap">
-  <div class="brand">
-    <span class="brand-dot"></span>
-    <span>ยอดขาย (Retail DW) — Dashboard</span>
-  </div>
+<body>
+  <!-- Glassmorphism Navigation -->
+  <nav class="top-nav">
+    <h1>
+      <div class="logo-icon">📊</div>
+      <span>Retail Dashboard</span>
+    </h1>
+    <button class="logout-btn" onclick="if(confirm('ต้องการออกจากระบบหรือไม่?')) window.location.href='logout.php'">
+      ออกจากระบบ
+    </button>
+  </nav>
 
-  <div class="d-flex align-items-center gap-2">
-    <span class="sub me-2">แหล่งข้อมูล: MySQL (mysqli)</span>
-    <a href="logout.php" class="btn-logout">ออกจากระบบ</a>
-  </div>
-</div>
-
-      <span class="sub">แหล่งข้อมูล: MySQL (mysqli)</span>
-
-    </div>
-
-    <!-- KPI -->
-    <div class="grid mb-3">
-      <div class="card p-3 col-4">
-        <div class="section-title">
-          <h5 class="mb-0">ยอดขาย 30 วัน</h5>
-          <span class="kpi-chip">THB</span>
-        </div>
+  <div class="container-fluid">
+    <!-- KPI Cards with Icons -->
+    <div class="grid mb-4" style="margin-top: 24px;">
+      <div class="card kpi-card col-4">
+        <div class="kpi-icon sales">💰</div>
+        <div class="kpi-label">ยอดขาย 30 วัน</div>
         <div class="kpi">฿<?= nf($kpi['sales_30d']) ?></div>
-        <div class="kpi-desc">ยอดขายรวมช่วง 30 วันที่ผ่านมา</div>
+        <div class="kpi-subtext">ยอดขายรวมทั้งหมด</div>
       </div>
-      <div class="card p-3 col-4">
-        <div class="section-title">
-          <h5 class="mb-0">จำนวนชิ้นขาย 30 วัน</h5>
-        </div>
-        <div class="kpi"><?= number_format((int)$kpi['qty_30d']) ?> ชิ้น</div>
-        <div class="kpi-desc">จำนวนรายการสินค้าที่ถูกขาย</div>
+      <div class="card kpi-card col-4">
+        <div class="kpi-icon qty">📦</div>
+        <div class="kpi-label">จำนวนชิ้นขาย 30 วัน</div>
+        <div class="kpi"><?= number_format((int)$kpi['qty_30d']) ?></div>
+        <div class="kpi-subtext">สินค้าที่ขายไปแล้ว</div>
       </div>
-      <div class="card p-3 col-4">
-        <div class="section-title">
-          <h5 class="mb-0">จำนวนผู้ซื้อ 30 วัน</h5>
-        </div>
-        <div class="kpi"><?= number_format((int)$kpi['buyers_30d']) ?> คน</div>
-        <div class="kpi-desc">จำนวนผู้ซื้อที่ไม่ซ้ำกัน</div>
+      <div class="card kpi-card col-4">
+        <div class="kpi-icon buyers">👥</div>
+        <div class="kpi-label">จำนวนผู้ซื้อ 30 วัน</div>
+        <div class="kpi"><?= number_format((int)$kpi['buyers_30d']) ?></div>
+        <div class="kpi-subtext">ลูกค้าที่ไม่ซ้ำกัน</div>
       </div>
     </div>
 
-    <!-- Charts grid -->
+    <!-- Charts Grid -->
     <div class="grid">
-      <div class="card p-3 col-8">
-        <h5 class="mb-2">ยอดขายรายเดือน (2 ปี)</h5>
+      <div class="card col-8">
+        <h5>📈 ยอดขายรายเดือน</h5>
         <canvas id="chartMonthly"></canvas>
       </div>
 
-      <div class="card p-3 col-4">
-        <h5 class="mb-2">สัดส่วนยอดขายตามหมวด</h5>
+      <div class="card col-4">
+        <h5>🎯 สัดส่วนตามหมวด</h5>
         <canvas id="chartCategory"></canvas>
       </div>
 
-      <div class="card p-3 col-6">
-        <h5 class="mb-2">Top 10 สินค้าขายดี</h5>
+      <div class="card col-6">
+        <h5>🏆 Top 10 สินค้าขายดี</h5>
         <canvas id="chartTopProducts"></canvas>
       </div>
 
-      <div class="card p-3 col-6">
-        <h5 class="mb-2">ยอดขายตามภูมิภาค</h5>
+      <div class="card col-6">
+        <h5>🗺️ ยอดขายตามภูมิภาค</h5>
         <canvas id="chartRegion"></canvas>
       </div>
 
-      <div class="card p-3 col-6">
-        <h5 class="mb-2">วิธีการชำระเงิน</h5>
+      <div class="card col-6">
+        <h5>💳 วิธีการชำระเงิน</h5>
         <canvas id="chartPayment"></canvas>
       </div>
 
-      <div class="card p-3 col-6">
-        <h5 class="mb-2">ยอดขายรายชั่วโมง</h5>
+      <div class="card col-6">
+        <h5>⏰ ยอดขายรายชั่วโมง</h5>
         <canvas id="chartHourly"></canvas>
       </div>
 
-      <div class="card p-3 col-12">
-        <h5 class="mb-2">ลูกค้าใหม่ vs ลูกค้าเดิม (รายวัน)</h5>
+      <div class="card col-12">
+        <h5>👤 ลูกค้าใหม่ vs ลูกค้าเดิม</h5>
         <canvas id="chartNewReturning"></canvas>
       </div>
     </div>
   </div>
 
 <script>
-/* ---------- Data from PHP ---------- */
-const monthly      = <?= json_encode($monthly, JSON_UNESCAPED_UNICODE) ?>;
-const category     = <?= json_encode($category, JSON_UNESCAPED_UNICODE) ?>;
-const region       = <?= json_encode($region, JSON_UNESCAPED_UNICODE) ?>;
-const topProducts  = <?= json_encode($topProducts, JSON_UNESCAPED_UNICODE) ?>;
-const payment      = <?= json_encode($payment, JSON_UNESCAPED_UNICODE) ?>;
-const hourly       = <?= json_encode($hourly, JSON_UNESCAPED_UNICODE) ?>;
+const monthly = <?= json_encode($monthly, JSON_UNESCAPED_UNICODE) ?>;
+const category = <?= json_encode($category, JSON_UNESCAPED_UNICODE) ?>;
+const region = <?= json_encode($region, JSON_UNESCAPED_UNICODE) ?>;
+const topProducts = <?= json_encode($topProducts, JSON_UNESCAPED_UNICODE) ?>;
+const payment = <?= json_encode($payment, JSON_UNESCAPED_UNICODE) ?>;
+const hourly = <?= json_encode($hourly, JSON_UNESCAPED_UNICODE) ?>;
 const newReturning = <?= json_encode($newReturning, JSON_UNESCAPED_UNICODE) ?>;
 
-/* ---------- Helpers ---------- */
-const toXY = (arr, x, y) => ({ labels: arr.map(o => o[x]), values: arr.map(o => parseFloat(o[y] ?? 0)) });
+const toXY = (arr, x, y) => ({ labels: arr.map(o => o[x]), values: arr.map(o => parseFloat(o[y])) });
 
-const fmtTHB = v => {
-  if (v === null || v === undefined || isNaN(v)) return '฿0';
-  return '฿' + Number(v).toLocaleString('th-TH', { maximumFractionDigits: 2 });
+// Gradient colors
+const gradients = {
+  purple: ['#667eea', '#764ba2'],
+  pink: ['#f093fb', '#f5576c'],
+  blue: ['#4facfe', '#00f2fe'],
+  orange: ['#fa709a', '#fee140'],
+  green: ['#30cfd0', '#330867'],
+  multi: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#fa709a', '#fee140']
 };
 
-// Warm palette
-const warm = {
-  line:     '#E07A5F',
-  line2:    '#D97706',
-  bar:      '#C08457',
-  bar2:     '#B45309',
-  bar3:     '#A16207',
-  doughnut: ['#E07A5F','#D97706','#C08457','#B45309','#A16207','#F1A27A','#F2C77B'],
-  pie:      ['#D97706','#E07A5F','#C08457','#B45309','#A16207','#F2C77B','#ECC68D'],
-  grid:     getComputedStyle(document.documentElement).getPropertyValue('--grid').trim(),
-  text:     getComputedStyle(document.documentElement).getPropertyValue('--text').trim(),
-  muted:    getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()
-};
+Chart.defaults.color = 'rgba(255, 255, 255, 0.9)';
+Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+Chart.defaults.font.family = 'Inter';
 
-// Global defaults
-Chart.defaults.font.family = '"Inter","Prompt",system-ui,-apple-system,Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans Thai", sans-serif';
-Chart.defaults.color = warm.text;
-
-// Common axis style
-const axis = {
-  x: { ticks: { color: warm.muted }, grid: { color: warm.grid } },
-  y: { ticks: { color: warm.muted, callback: (v)=>Number(v).toLocaleString('th-TH') }, grid: { color: warm.grid } }
-};
-
-// Tooltip formatter
-const tooltip = {
-  callbacks: {
-    label: ctx => {
-      const dsLabel = ctx.dataset.label ? ctx.dataset.label + ': ' : '';
-      const val = ctx.parsed.y ?? ctx.parsed;
-      return dsLabel + fmtTHB(val);
-    }
-  }
-};
-
-// Empty-state guard
-const safe = (arr)=> Array.isArray(arr) && arr.length>0;
-
-/* ---------- Monthly (Line / Area) ---------- */
+// Monthly Sales
 (() => {
   const {labels, values} = toXY(monthly, 'ym', 'net_sales');
-  new Chart(document.getElementById('chartMonthly'), {
+  const ctx = document.getElementById('chartMonthly').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, 'rgba(102, 126, 234, 0.4)');
+  gradient.addColorStop(1, 'rgba(102, 126, 234, 0.05)');
+  
+  new Chart(ctx, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'ยอดขาย (฿)',
-        data: values,
-        borderColor: warm.line,
-        backgroundColor: (ctx) => {
-          const {chart} = ctx;
-          const {ctx: c} = chart;
-          const g = c.createLinearGradient(0, 0, 0, chart.height);
-          g.addColorStop(0, 'rgba(224,122,95,0.30)');
-          g.addColorStop(1, 'rgba(224,122,95,0.02)');
-          return g;
-        },
-        tension: .25,
-        fill: true,
-        pointRadius: 2,
-        pointHoverRadius: 4
-      }]
-    },
-    options: {
-      maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: warm.text } }, tooltip },
-      scales: axis
+    data: { labels, datasets: [{ 
+      label: 'ยอดขาย (฿)', 
+      data: values, 
+      borderColor: '#667eea',
+      backgroundColor: gradient,
+      tension: 0.4, 
+      fill: true,
+      borderWidth: 3,
+      pointBackgroundColor: '#fff',
+      pointBorderColor: '#667eea',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+      pointHoverRadius: 6
+    }] },
+    options: { 
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+        y: { grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+      }
     }
   });
 })();
 
-/* ---------- Category (Doughnut) ---------- */
+// Category
 (() => {
   const {labels, values} = toXY(category, 'category', 'net_sales');
   new Chart(document.getElementById('chartCategory'), {
     type: 'doughnut',
-    data: { labels, datasets: [{ data: values, backgroundColor: warm.doughnut, borderWidth: 0 }] },
-    options: {
-      cutout: '60%',
-      plugins: {
-        legend: { position: 'bottom', labels: { color: warm.muted } },
-        tooltip: { callbacks: { label: (ctx)=>`${ctx.label}: ${fmtTHB(ctx.parsed)}` } }
-      }
+    data: { labels, datasets: [{ 
+      data: values, 
+      backgroundColor: gradients.multi,
+      borderWidth: 0
+    }] },
+    options: { 
+      plugins: { 
+        legend: { 
+          position: 'bottom',
+          labels: { 
+            color: 'rgba(255, 255, 255, 0.9)',
+            padding: 15,
+            font: { size: 11, weight: 600 }
+          }
+        }
+      },
+      cutout: '65%'
     }
   });
 })();
 
-/* ---------- Top Products (Horizontal Bar) ---------- */
+// Top Products
 (() => {
   const labels = topProducts.map(o => o.product_name);
-  const qty = topProducts.map(o => parseInt(o.qty_sold ?? 0));
-  new Chart(document.getElementById('chartTopProducts'), {
+  const qty = topProducts.map(o => parseInt(o.qty_sold));
+  const ctx = document.getElementById('chartTopProducts').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 500, 0);
+  gradient.addColorStop(0, '#f093fb');
+  gradient.addColorStop(1, '#f5576c');
+  
+  new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'ชิ้นที่ขาย',
-        data: qty,
-        borderRadius: 10,
-        backgroundColor: warm.bar
-      }]
-    },
+    data: { labels, datasets: [{ 
+      label: 'ชิ้นที่ขาย', 
+      data: qty, 
+      backgroundColor: gradient,
+      borderRadius: 8
+    }] },
     options: {
       indexAxis: 'y',
-      maintainAspectRatio:false,
-      plugins: { legend: { labels: { color: warm.text } },
-        tooltip: { callbacks: { label: (ctx)=> `${ctx.dataset.label}: ${Number(ctx.parsed.x).toLocaleString('th-TH')} ชิ้น` } }
-      },
+      plugins: { legend: { display: false } },
       scales: {
-        x: { ticks: { color: warm.muted }, grid: { color: warm.grid } },
-        y: { ticks: { color: warm.muted }, grid: { color: 'transparent' } }
+        x: { grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+        y: { grid: { display: false } }
       }
     }
   });
 })();
 
-/* ---------- Region (Bar) ---------- */
+// Region
 (() => {
   const {labels, values} = toXY(region, 'region', 'net_sales');
   new Chart(document.getElementById('chartRegion'), {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'ยอดขาย (฿)',
-        data: values,
-        backgroundColor: warm.bar2,
-        borderRadius: 10
-      }]
-    },
-    options: {
-      maintainAspectRatio:false,
-      plugins: { legend: { labels: { color: warm.text } }, tooltip },
-      scales: axis
-    }
-  });
-})();
-
-/* ---------- Payment (Pie) ---------- */
-(() => {
-  const {labels, values} = toXY(payment, 'payment_method', 'net_sales');
-  new Chart(document.getElementById('chartPayment'), {
-    type: 'pie',
-    data: { labels, datasets: [{ data: values, backgroundColor: warm.pie, borderWidth: 0 }] },
-    options: {
-      plugins: {
-        legend: { position: 'bottom', labels: { color: warm.muted } },
-        tooltip: { callbacks: { label: (ctx)=> `${ctx.label}: ${fmtTHB(ctx.parsed)}` } }
+    data: { labels, datasets: [{ 
+      label: 'ยอดขาย (฿)', 
+      data: values, 
+      backgroundColor: gradients.multi,
+      borderRadius: 8
+    }] },
+    options: { 
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(255, 255, 255, 0.1)' } }
       }
     }
   });
 })();
 
-/* ---------- Hourly (Bar) ---------- */
+// Payment
 (() => {
-  const {labels, values} = toXY(hourly, 'hour_of_day', 'net_sales');
-  new Chart(document.getElementById('chartHourly'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'ยอดขาย (฿)',
-        data: values,
-        backgroundColor: warm.bar3,
-        borderRadius: 8
-      }]
-    },
-    options: {
-      plugins: { legend: { labels: { color: warm.text } }, tooltip },
-      scales: axis
+  const {labels, values} = toXY(payment, 'payment_method', 'net_sales');
+  new Chart(document.getElementById('chartPayment'), {
+    type: 'pie',
+    data: { labels, datasets: [{ 
+      data: values, 
+      backgroundColor: gradients.multi,
+      borderWidth: 0
+    }] },
+    options: { 
+      plugins: { 
+        legend: { 
+          position: 'bottom',
+          labels: { 
+            color: 'rgba(255, 255, 255, 0.9)',
+            padding: 15,
+            font: { size: 11, weight: 600 }
+          }
+        }
+      }
     }
   });
 })();
 
-/* ---------- New vs Returning (Dual Line) ---------- */
+// Hourly
+(() => {
+  const {labels, values} = toXY(hourly, 'hour_of_day', 'net_sales');
+  const ctx = document.getElementById('chartHourly').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, 'rgba(79, 172, 254, 0.8)');
+  gradient.addColorStop(1, 'rgba(0, 242, 254, 0.8)');
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ 
+      label: 'ยอดขาย (฿)', 
+      data: values, 
+      backgroundColor: gradient,
+      borderRadius: 8
+    }] },
+    options: { 
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+      }
+    }
+  });
+})();
+
+// New vs Returning
 (() => {
   const labels = newReturning.map(o => o.date_key);
-  const newC = newReturning.map(o => parseFloat(o.new_customer_sales ?? 0));
-  const retC = newReturning.map(o => parseFloat(o.returning_sales ?? 0));
-  new Chart(document.getElementById('chartNewReturning'), {
+  const newC = newReturning.map(o => parseFloat(o.new_customer_sales));
+  const retC = newReturning.map(o => parseFloat(o.returning_sales));
+  
+  const ctx = document.getElementById('chartNewReturning').getContext('2d');
+  const gradient1 = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient1.addColorStop(0, 'rgba(240, 147, 251, 0.4)');
+  gradient1.addColorStop(1, 'rgba(240, 147, 251, 0.05)');
+  
+  const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient2.addColorStop(0, 'rgba(79, 172, 254, 0.4)');
+  gradient2.addColorStop(1, 'rgba(79, 172, 254, 0.05)');
+  
+  new Chart(ctx, {
     type: 'line',
-    data: {
-      labels,
+    data: { labels,
       datasets: [
-        { label: 'ลูกค้าใหม่ (฿)', data: newC, borderColor: warm.line,     tension: .25, fill: false, pointRadius: 0, pointHoverRadius: 3 },
-        { label: 'ลูกค้าเดิม (฿)', data: retC, borderColor: warm.line2,    tension: .25, fill: false, pointRadius: 0, pointHoverRadius: 3 }
+        { 
+          label: 'ลูกค้าใหม่ (฿)', 
+          data: newC, 
+          borderColor: '#f093fb', 
+          backgroundColor: gradient1, 
+          tension: 0.4, 
+          fill: true, 
+          borderWidth: 3,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#f093fb',
+          pointBorderWidth: 2,
+          pointRadius: 3
+        },
+        { 
+          label: 'ลูกค้าเดิม (฿)', 
+          data: retC, 
+          borderColor: '#4facfe', 
+          backgroundColor: gradient2, 
+          tension: 0.4, 
+          fill: true, 
+          borderWidth: 3,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#4facfe',
+          pointBorderWidth: 2,
+          pointRadius: 3
+        }
       ]
     },
-    options: {
-      plugins: { legend: { labels: { color: warm.text } }, tooltip },
+    options: { 
+      plugins: { 
+        legend: { 
+          position: 'top',
+          labels: { 
+            color: 'rgba(255, 255, 255, 0.9)',
+            padding: 15,
+            font: { size: 12, weight: 600 }
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: warm.muted, maxTicksLimit: 12 }, grid: { color: warm.grid } },
-        y: { ticks: { color: warm.muted, callback: (v)=>Number(v).toLocaleString('th-TH') }, grid: { color: warm.grid } }
+        x: { 
+          grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
+          ticks: { maxTicksLimit: 12 } 
+        },
+        y: { grid: { color: 'rgba(255, 255, 255, 0.1)' } }
       }
     }
   });
 })();
 </script>
-
 </body>
 </html>
