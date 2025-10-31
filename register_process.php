@@ -1,73 +1,43 @@
+?>
 <?php
-require __DIR__ . '/config_mysqli.php';
-require __DIR__ . '/csrf.php';
+session_start();
+require_once __DIR__ . '/config_mysqli.php';
+require_once __DIR__ . '/csrf.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  header('Location: register.php'); exit;
+function flash_back_reg($msg){ $_SESSION['flash_error']=$msg; header('Location: register.php'); exit; }
+
+if (function_exists('csrf_validate_request')) {
+  if (!csrf_validate_request($_POST)) flash_back_reg('Invalid request.');
+} elseif (isset($_POST['csrf_token']) && function_exists('csrf_verify_token')) {
+  if (!csrf_verify_token($_POST['csrf_token'])) flash_back_reg('Invalid request.');
 }
 
-if (!csrf_check($_POST['csrf'] ?? '')) {
-  $_SESSION['flash'] = 'Invalid request. Please try again.';
-  header('Location: register.php'); exit;
-}
+$display = trim($_POST['display_name'] ?? '');
+$email   = trim($_POST['email'] ?? '');
+$pass    = $_POST['password'] ?? '';
+$pass2   = $_POST['password2'] ?? '';
 
-$name     = trim($_POST['name'] ?? '');
-$email    = trim($_POST['email'] ?? '');
-$password = $_POST['password'] ?? '';
-$confirm  = $_POST['password_confirm'] ?? '';
+if ($email === '' || $pass === '' || $pass2 === '') flash_back_reg('Please fill in all required fields.');
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) flash_back_reg('Invalid email format.');
+if ($pass !== $pass2) flash_back_reg('Passwords do not match.');
+if (strlen($pass) < 6) flash_back_reg('Password must be at least 6 characters.');
 
-$errors = [];
+$hash = password_hash($pass, PASSWORD_DEFAULT);
 
-if ($name === '' || mb_strlen($name) > 100) {
-  $errors[] = 'Please enter a valid name (max 100 chars).';
-}
-if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 254) {
-  $errors[] = 'Please enter a valid email.';
-}
-if (strlen($password) < 8) {
-  $errors[] = 'Password must be at least 8 characters.';
-}
-if ($password !== $confirm) {
-  $errors[] = 'Password confirmation does not match.';
-}
-
-if ($errors) {
-  $_SESSION['flash'] = implode(' ', $errors);
-  header('Location: register.php'); exit;
-}
-
-try {
-  $stmt = $mysqli->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
-  if (!$stmt) { throw new Exception('Prepare failed'); }
-  $stmt->bind_param('s', $email);
-  $stmt->execute();
-  $stmt->store_result();
-  if ($stmt->num_rows > 0) {
-    $stmt->close();
-    $_SESSION['flash'] = 'This email is already registered.';
-    header('Location: register.php'); exit;
-  }
-  $stmt->close();
-
-  $hash = password_hash($password, PASSWORD_DEFAULT);
+$mysqli = $conn ?? (new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME));
+if ($mysqli->connect_errno) flash_back_reg('Database error.');
 
 
-  $stmt2 = $mysqli->prepare('INSERT INTO users (email, display_name, password_hash) VALUES (?, ?, ?)');
-  if (!$stmt2) { throw new Exception('Prepare failed'); }
-  $stmt2->bind_param('sss', $email, $name, $hash);
-  $ok = $stmt2->execute();
-  $newUserId = $stmt2->insert_id;
-  $stmt2->close();
+$chk = $mysqli->prepare('SELECT id FROM users WHERE email=? LIMIT 1');
+$chk->bind_param('s',$email);
+$chk->execute();
+if ($chk->get_result()->fetch_row()) flash_back_reg('Email already registered.');
 
-  if (!$ok) {
-    $_SESSION['flash'] = 'Something went wrong. Please try again.';
-    header('Location: register.php'); exit;
-  }
+$ins = $mysqli->prepare('INSERT INTO users (email, display_name, password_hash, created_at) VALUES (?,?,?,NOW())');
+$ins->bind_param('sss', $email, $display, $hash);
+if (!$ins->execute()) flash_back_reg('Register failed.');
 
-  $_SESSION['flash'] = 'Registration successful. Please sign in.';
-  header('Location: login.php'); exit;
-  
-} catch (Throwable $e) {
-  $_SESSION['flash'] = 'Server error. Please try again.';
-  header('Location: register.php'); exit;
-}
+$_SESSION['user_id'] = $ins->insert_id;
+$_SESSION['display_name'] = $display ?: $email;
+header('Location: dashboard.php');
+exit;
