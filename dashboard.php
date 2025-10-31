@@ -140,6 +140,25 @@ function nf($n) { return number_format((float)$n, 2); }
 
     /* Soft focus outline on focusable elements */
     a, button { outline-color: var(--accent); outline-offset: 3px; }
+     .btn-logout {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-shadow: 0 3px 8px rgba(224,122,95,0.25);
+  transition: all 0.2s ease;
+}
+.btn-logout:hover {
+  background: var(--accent-2);
+  box-shadow: 0 5px 12px rgba(217,119,6,0.3);
+  text-decoration: none;
+}
+.btn-logout:active {
+  transform: scale(0.97);
+}
   </style>
 </head>
 <body class="p-3 p-md-4">
@@ -149,7 +168,20 @@ function nf($n) { return number_format((float)$n, 2); }
         <span class="brand-dot"></span>
         <span>ยอดขาย (Retail DW) — Dashboard</span>
       </div>
+      <div class="app-header mb-3 d-flex align-items-center justify-content-between flex-wrap">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    <span>ยอดขาย (Retail DW) — Dashboard</span>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+    <span class="sub me-2">แหล่งข้อมูล: MySQL (mysqli)</span>
+    <a href="logout.php" class="btn-logout">ออกจากระบบ</a>
+  </div>
+</div>
+
       <span class="sub">แหล่งข้อมูล: MySQL (mysqli)</span>
+
     </div>
 
     <!-- KPI -->
